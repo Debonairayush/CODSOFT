@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href='bb_logo(white).png' type="image/png">
+  <title>Book Donation Slot</title>
+  <style>
+ body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background: radial-gradient(#2e0a0a, #e00a0a, rgb(0, 0, 0)); ;
+        color: #333;
+        width: 100%;
+        height: 100%;
+        background: url(login.jpg);
+      }
+      
+      header {
+        background-image: url("");
+        color: #000000;
+        padding: 1em;
+        text-align: center;
+        animation: fadeInDown 1s ease;
+      }
+      
+      section {
+        max-width: 800px;
+        margin: 2em auto;
+        padding: 1em;
+        background-color: rgba(255, 146, 251, 0.528);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        animation: slideInUp 1s ease;
+        border-radius: 25px;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 0.5em;
+      }
+      
+      input,
+      select,
+      button {
+        margin-bottom: 1em;
+        animation: fadeIn 1s ease;
+      }
+      
+      button {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 0.5em 1em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      
+      button:hover {
+        background-color: #45a049;
+      }
+      
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Book Your Donation</h1>
+    <p>Your donation can save many lives ❤️ </p>
+  </header>
+
+  <section id="data-collection">
+    <h2>Details</Details></h2>
+    <form id="Blood-form">
+
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Enter your name here" required>
+
+      <label for="number">Contact No.</label>
+      <input type="number" id="number" name="number" placeholder="Enter your contact details" min="6000000000" max="999999999" required>
+
+      <label for="blood-group">Blood Group:</label>
+      <select id="blood-group" name="blood-group" required>
+        <option value="none">Select blood group</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+      </select>
+      
+      <label for="weight">Weight:</label>
+      <input type="number" id="weight" name="weight" placeholder="Enter your weight (kg)" required>
+
+      <label for="exercise">Weekly Exercise:</label>
+      <select id="exercise" name="exercise" required>
+        <option value="none">Select exercise frequency</option>
+        <option value="low">Low</option>
+        <option value="moderate">Moderate</option>
+        <option value="high">High</option>
+      </select>
+
+
+      <label for="chronic-disease">Are you suffering from Chronic Disease:</label>
+      <select name="disead" id="Chronic Disease" required>
+        <option value="true">Yes</option>
+        <option value="No">No</option>
+      </select>
+      <br>
+      <textarea placeholder="if yes then please specify"></textarea>
+
+      <label for="sleep">Have you consumed any narcotics or alcohol in past 24 hours:</label>
+      <select name="sleep" id="sleep" required>
+        <option value="yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+      <br>
+      <button type="button" onclick="collectHealthData()">Submit</button>
+    </form>
+  </section>
+
+  <!-- <section id="data-analysis">
+    <h2>Data Analysis</h2>
+    <div id="analysis-result"></div>
+  </section> -->
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJBZcqPw8-YojNzSRimDRbeqnQpXXzZ9s",
+      authDomain: "rudhir-ea9b2.firebaseapp.com",
+      databaseURL: "https://rudhir-ea9b2-default-rtdb.firebaseio.com",
+      projectId: "rudhir-ea9b2",
+      storageBucket: "rudhir-ea9b2.appspot.com",
+      messagingSenderId: "916172406860",
+      appId: "1:916172406860:web:122dd9dfa4cf59312d74e9",
+      measurementId: "G-3W4E8KHQZX"
+    };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    // Reference to your Firebase database
+    const database = firebase.database();
+  
+    function collectHealthData() {
+      // Get form values
+      const name = document.getElementById('name').value;
+      const number = document.getElementById('number').value;
+      const bloodGroup = document.getElementById('blood-group').value;
+      const weight = document.getElementById('weight').value;
+      const exercise = document.getElementById('exercise').value;
+      const chronicDisease = document.getElementById('Chronic Disease').value;
+      const chronicDiseaseDetails = document.querySelector('textarea').value;
+      const sleep = document.getElementById('sleep').value;
+  
+      // Create an object with the form data
+      const formData = {
+        name: name,
+        number: number,
+        bloodGroup: bloodGroup,
+        weight: weight,
+        exercise: exercise,
+        chronicDisease: chronicDisease,
+        chronicDiseaseDetails: chronicDiseaseDetails,
+        sleep: sleep
+      };
+  
+      // Push the data to Firebase
+      database.ref('Blood-form').push(formData);
+  
+      // Optionally, you can clear the form after submission
+      document.getElementById('Blood-form').reset();
+  
+       // Show a confirmation message to the user}
+    
+    alert('Your health data has been submitted. Thank you for your donation!');
+    } 
+  </script>
+  </body>
+  </html>   
